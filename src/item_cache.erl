@@ -14,7 +14,7 @@
 -export([start_link/0, init/1, handle_call/3, handle_cast/2]).
 
 start_link() ->
-  gen_server:start_link({local, items}, ?MODULE, []).
+  gen_server:start_link({local, ?MODULE}, ?MODULE, []).
 
 init(_Args) ->
   {ok, []}.
@@ -23,9 +23,8 @@ handle_call({find, _Id}, _From, []) ->
   {reply, {error, no_items}, []};
 
 handle_call({find, Id}, _From, Items) ->
-  Filtered = lists:filter(fun ({CurrentId, _, _}) -> CurrentId =:= Id end, Items),
-  Item = lists:last(Filtered),
-  {reply, {ok, Item}, Items};
+  Found = item_lists:find_by_id(Id, Items),
+  {reply, Found, Items};
 
 handle_call(get_random, _From, []) ->
   {reply, {error, no_items}, []};

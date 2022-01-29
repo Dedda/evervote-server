@@ -15,8 +15,8 @@
 
 init(Req, State) ->
   Path = cowboy_req:path_info(Req),
-  StringPath = lists:map(fun (Item) -> binary_to_list(Item) end, Path),
-  io:format("PATH: ~s~n", [Path]),
+  StringPath = lists:map(fun binary_to_list/1, Path),
+  io:format("PATH: <<~s>>~n", [Path]),
   handle_path(StringPath, Req, State).
 
 -spec handle_path(string(), term(), term()) -> {ok, term(), term()}.

@@ -30,8 +30,10 @@ get_random_from_empty_test() ->
 
 get_random_test() ->
   item_cache:start_link(),
-  item_cache:add(#item{id = 1, title = "Title 1", description = "Description 1"}),
-  item_cache:add(#item{id = 2, title = "Title 2", description = "Description 2"}),
+  item_cache:set_votes(#{
+    1 => #item{id = 1, title = "Title 1", description = "Description 1"},
+    2 => #item{id = 2, title = "Title 2", description = "Description 2"}
+  }),
   ?assertEqual(2, length(maps:keys(item_cache:get_all()))),
   {Status, _Item} = item_cache:get_random(),
   ?assertEqual(ok, Status),

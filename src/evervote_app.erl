@@ -11,7 +11,10 @@
 
 start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
-        {<<"localhost">>, [{<<"/">>, hello_handler, []}]}
+        {'_', [
+            {<<"/">>, hello_handler, []},
+            {<<"/items/[...]">>, item_handler, []}
+        ]}
     ]),
     {ok, _} = cowboy:start_clear(
         hello_listener,

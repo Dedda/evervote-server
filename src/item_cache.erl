@@ -12,10 +12,10 @@
 %% API
 -behaviour(gen_server).
 -export([start_link/0, init/1, stop/0, handle_call/3, handle_cast/2]).
--export([get_all/0, get_random/0, add/1, clear/0]).
+-export([get_all/0, get_random/0, add/1, set_votes/1, clear/0]).
 -include("items.hrl").
 
--record(state, {items :: items_map()}).
+-record(state, {items = #{} :: items_map()}).
 
 -type state() :: #state{}.
 
@@ -24,7 +24,7 @@ start_link() ->
 
 -spec init(any()) -> {ok, state()}.
 init(_Args) ->
-  {ok, #state{items = #{}}}.
+  {ok, #state{}}.
 
 -spec handle_call
     ({find, item_id()}, pid(), state()) -> {reply, {ok, item()} | {error, term()}, state()};
@@ -47,13 +47,13 @@ handle_call(get_all, _From, Items) ->
 
 -spec handle_cast
     ({add, item()}, state()) -> {noreply, state()};
-    (clear, state()) -> {noreply, state()}.
+    ({set_votes, items_map()}, state()) -> {noreply, state()}.
 handle_cast({add, Item}, Items) ->
   Id = Item#item.id,
   {noreply, Items#state{items = maps:put(Id, Item, Items#state.items)}};
 
-handle_cast(clear, _) ->
-  {noreply, #state{items = #{}}}.
+handle_cast({set_votes, Votes}, State) ->
+  {noreply, State#state{items = Votes}}.
 
 stop() ->
   gen_server:stop(?MODULE).
@@ -70,6 +70,10 @@ get_random() ->
 add(Item) ->
   gen_server:cast(?MODULE, {add, Item}).
 
+-spec set_votes(items_map()) -> ok.
+set_votes(Votes) ->
+  gen_server:cast(?MODULE, {set_votes, Votes}).
+
 -spec clear() -> ok.
 clear() ->
-  gen_server:cast(?MODULE, clear).
+  set_votes(#{}).

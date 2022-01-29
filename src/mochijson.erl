@@ -418,7 +418,7 @@ tokenize(L=[C | _], S) when C >= $0, C =< $9; C == $- ->
             {{const, list_to_float(Float)}, Rest, S1}
     end.
 
-
+-ifdef(comment).
 %%
 %% Tests
 %%
@@ -544,4 +544,5 @@ e2j_test_vec(utf8) ->
      "[-123,\"foo\",{\"bar\":[]},null]"}
     ].
 
+-endif.
 -endif.

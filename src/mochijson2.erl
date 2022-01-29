@@ -627,6 +627,8 @@ tokenize(B, S=#decoder{offset=O}) ->
             trim = S#decoder.state,
             {eof, S}
     end.
+
+-ifdef(comment).
 %%
 %% Tests
 %%
@@ -993,4 +995,5 @@ encode_empty_map_test() ->
 
 -endif.
 
+-endif.
 -endif.

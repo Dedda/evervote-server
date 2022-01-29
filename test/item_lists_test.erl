@@ -14,16 +14,25 @@
 -include_lib("eunit/include/eunit.hrl").
 
 find_by_id_in_empty_list_test() ->
-  Expected = {error, no_items},
-  Expected = item_lists:find_by_id(1, []).
+  Expected = {error, not_found},
+  ?assertEqual(Expected, item_lists:find_by_id(1, #{})).
 
 find_by_id_test() ->
   Item = {3, "Item 3", "This is expected"},
-  List = [{1, "Item 1", "First"}, {2, "Item 2", "Second"}, Item, {4, "Item 4", "Forth"}],
+  List = #{
+    1 => {1, "Item 1", "First"},
+    2 => {2, "Item 2", "Second"},
+    3 => Item,
+    4 => {4, "Item 4", "Forth"}
+  },
   Expected = {ok, Item},
-  Expected = item_lists:find_by_id(3, List).
+  ?assertEqual(Expected, item_lists:find_by_id(3, List)).
 
 cannot_find_item_by_id_test() ->
-  List = [{1, "Item 1", "First"}, {2, "Item 2", "Second"}, {4, "Item 4", "Forth"}],
+  List = #{
+    1 => {1, "Item 1", "First"},
+    2 => {2, "Item 2", "Second"},
+    4 => {4, "Item 4", "Forth"}
+  },
   Expected = {error, not_found},
-  Expected = item_lists:find_by_id(3, List).
+  ?assertEqual(Expected, item_lists:find_by_id(3, List)).

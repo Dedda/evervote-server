@@ -16,7 +16,18 @@
 cannot_find_votes_test() ->
   Votes = #{},
   Expected = 0,
-  Expected = vote_lists:find_votes(1, Votes).
+  ?assertEqual(Expected, vote_lists:find_votes(1, Votes)).
+
+add_vote_test() ->
+  Votes = #{
+    1 => 2,
+    2 => 3
+  },
+  Expected = #{
+    1 => 2,
+    2 => 4
+  },
+  ?assertEqual(Expected, vote_lists:add_vote({2, 1}, Votes)).
 
 find_votes_test() ->
   Votes = #{
@@ -25,7 +36,7 @@ find_votes_test() ->
     3 => 5
   },
   Expected = 3,
-  Expected = vote_lists:find_votes(2, Votes).
+  ?assertEqual(Expected, vote_lists:find_votes(2, Votes)).
 
 total_votes_test() ->
   Votes = #{
@@ -33,4 +44,4 @@ total_votes_test() ->
     4 => 5,
     5 => 4
   },
-  {3, 12} = vote_lists:total_votes(Votes).
+  ?assertEqual({3, 12}, vote_lists:total_votes(Votes)).

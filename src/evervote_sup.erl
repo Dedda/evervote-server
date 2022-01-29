@@ -14,7 +14,7 @@
 -define(SERVER, ?MODULE).
 
 start_link() ->
-    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
+  supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 %% sup_flags() = #{strategy => strategy(),         % optional
 %%                 intensity => non_neg_integer(), % optional
@@ -26,10 +26,18 @@ start_link() ->
 %%                  type => worker(),       % optional
 %%                  modules => modules()}   % optional
 init([]) ->
-    SupFlags = #{strategy => one_for_all,
-                 intensity => 0,
-                 period => 1},
-    ChildSpecs = [],
-    {ok, {SupFlags, ChildSpecs}}.
+  SupFlags = #{strategy => one_for_one,
+    intensity => 0,
+    period => 1},
+  ItemCache = #{
+    id => item_cache,
+    start => {item_cache, start_link, []}
+  },
+  Voting = #{
+    id => voting,
+    start => {voting, start_link, []}
+  },
+  ChildSpecs = [ItemCache, Voting],
+  {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions

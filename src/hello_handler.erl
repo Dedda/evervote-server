@@ -10,14 +10,14 @@
 -author("dedda").
 
 %% API
--behavior(cowboy_handler).
+-behaviour(cowboy_handler).
 -export([init/2]).
 
 init(Req, State) ->
-  Req_1 = cowboy_req:reply(
+  Req1 = cowboy_req:reply(
     200,
     #{<<"content-type">> => <<"text/plain">>},
     <<"Hello, world!">>,
     Req
   ),
-  {ok, Req_1, State}.
+  {ok, Req1, State}.

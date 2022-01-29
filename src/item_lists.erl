@@ -12,11 +12,11 @@
 %% API
 -export([find_by_id/2]).
 
-find_by_id(_ItemId, []) ->
-  {error, no_items};
+-include("items.hrl").
+
+-spec find_by_id(item_id(), items_map()) -> {error, not_found} | {ok, item()}.
 find_by_id(ItemId, Items) ->
-  Pred = fun({CurrentId, _, _}) -> CurrentId =:= ItemId end,
-  case lists:filter(Pred, Items) of
-    [] -> {error, not_found};
-    [Item | _] -> {ok, Item}
+  case maps:get(ItemId, Items, not_found) of
+    not_found -> {error, not_found};
+    Found -> {ok, Found}
   end.

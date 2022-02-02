@@ -6,7 +6,7 @@
 %%% @end
 %%% Created : 28. Jan 2022 12:55
 %%%-------------------------------------------------------------------
--module(hello_handler).
+-module(index_handler).
 -author("dedda").
 
 %% API
@@ -16,8 +16,13 @@
 init(Req, State) ->
   Req1 = cowboy_req:reply(
     200,
-    #{<<"content-type">> => <<"text/plain">>},
-    <<"Hello, world!">>,
+    #{<<"content-type">> => <<"text/html">>},
+    index_html(),
     Req
   ),
   {ok, Req1, State}.
+
+-spec index_html() -> binary().
+index_html() ->
+  {ok, Index} = file:read_file("web/index.html"),
+  Index.

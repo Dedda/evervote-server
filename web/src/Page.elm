@@ -1,7 +1,9 @@
 module Page exposing (..)
+
 import Browser exposing (Document)
 import Html exposing (..)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (..)
+import Route exposing (Route)
 
 type Page
     = Other
@@ -13,5 +15,29 @@ view page { title, content } =
 
 headerBar : Html msg
 headerBar =
-    div [] 
-        [ div [ class "header-item" ] [text "Home"] ]
+    nav []
+        [ nav 
+            [ classList 
+                [ ("navbar", True)
+                , ("navbar-default", True)
+                , ("navbar-inverse", True)
+                , ("navbar-fixed-top", True) 
+                ]        
+            ]
+            [ div [ class "container" ]
+                [ div [ class "navbar-header" ] 
+                    [ a [ class "navbar-brand", Route.href Route.Index ] [ text "Evervote" ]
+                    ]
+                , div [ classList [ ("collapse", True), ("navbar-collapse", True) ] ] 
+                    [ ul [ classList [ ("nav", True), ("navbar-nav", True) ]]
+                        [ navLi Route.Index "Home"
+                        , navLi Route.ItemList "Items"
+                        ]
+                    ]
+                ]
+            ]
+        ]
+
+navLi : Route -> String -> Html msg
+navLi route label =
+    li [] [ a [ Route.href route ] [ text label ] ]

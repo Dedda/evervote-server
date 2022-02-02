@@ -1,4 +1,5 @@
 module Page.Blank exposing (..)
+
 import Html exposing (Html)
 
 view : { title : String, content : Html msg }

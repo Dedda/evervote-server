@@ -1,6 +1,7 @@
 module Page.Index exposing (..)
 
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import Session exposing (Session)
 import Route exposing (Route)
 
@@ -20,5 +21,11 @@ update msg model = ( model, Cmd.none )
 view : Model -> { title : String, content : Html Msg }
 view model =
     { title = "Index"
-    , content = a [ Route.href Route.ItemList ] [text "To Items"]
+    , content = div [ class "container" ] 
+                    [ div [ class "jumbotron" ] 
+                        [ div [ class "row" ] 
+                            [ a [ Route.href Route.ItemList ] [text "To Items"] 
+                            ]
+                        ]
+                    ]
     }

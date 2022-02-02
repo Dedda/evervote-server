@@ -1,19 +1,18 @@
 module Main exposing (..)
 
-import Browser
+import Browser exposing (Document)
 import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Page.Index as Index
-import Page.ItemList as ItemList
+import Html.Events exposing (onClick)
 import Page as Page
 import Page.Blank as Blank
+import Page.Index as Index
+import Page.ItemList as ItemList
 import Url exposing (Url)
-import Browser exposing (Document)
 import Route exposing (..)
 import Json.Decode exposing (Value)
 import Session exposing (..)
-import Html.Events exposing (onClick)
 
 type Model
     = Redirect Session

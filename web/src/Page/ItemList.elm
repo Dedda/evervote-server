@@ -1,7 +1,9 @@
 module Page.ItemList exposing (..)
-import Session exposing (Session)
+
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import Route exposing (Route)
+import Session exposing (Session)
 
 type alias Model = 
     { session : Session 
@@ -19,5 +21,5 @@ update msg model = ( model, Cmd.none )
 view : Model -> { title : String, content : Html Msg }
 view model =
     { title = "Items" 
-    , content = a [ Route.href Route.Index ] [text "To Index"]
+    , content = div [ class "container" ] [ a [ Route.href Route.Index ] [text "To Index"] ]
     }

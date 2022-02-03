@@ -10,7 +10,7 @@
 -author("dedda").
 
 %% API
--export([to_map/1, to_binary_map/1]).
+-export([to_map/1, to_binary_map/1, item_from_binary_map/1]).
 -include("items.hrl").
 
 -spec to_map(item()) -> #{ atom() => pos_integer() | string() }.
@@ -27,4 +27,12 @@ to_binary_map(#item{id = Id, title = Title, description = Description}) ->
     id => Id,
     title => list_to_binary(Title),
     description => list_to_binary(Description)
+  }.
+
+-spec item_from_binary_map(#{ binary() => binary() }) -> {ok, item()}.
+item_from_binary_map(Data) ->
+  #item{
+    id = maps:get(<<"id">>, Data),
+    title = binary_to_list(maps:get(<<"title">>, Data)),
+    description = binary_to_list(maps:get(<<"description">>, Data, <<"">>))
   }.

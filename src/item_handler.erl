@@ -11,25 +11,43 @@
 
 %% API
 -behaviour(cowboy_handler).
+-export([allowed_methods/2]).
 -export([init/2]).
 
 -include("items.hrl").
 
 -type handler_fun() :: fun((term(), term()) -> {ok, term(), term()}).
 
+allowed_methods(Req, State) ->
+    {[<<"GET">>, <<"POST">>], Req, State}.
+
 -spec init(term(), term()) -> {ok, term(), term()}.
 init(Req, State) ->
   Path = cowboy_req:path_info(Req),
+  Method = cowboy_req:method(Req),
+  io:format("Method: ~w~nPath: ~w~n", [Method, Path]),
   StringPath = lists:map(fun binary_to_list/1, Path),
-  HandlerFunc = handler_for_path(StringPath),
+  HandlerFunc = handler_for_method(Method, StringPath),
   HandlerFunc(Req, State).
 
--spec handler_for_path([string()]) -> handler_fun().
-handler_for_path(Path) ->
+-spec handler_for_method(binary(), [string()]) -> handler_fun().
+handler_for_method(<<"GET">>, Path) ->
+  get_handler_for_path(Path);
+handler_for_method(<<"POST">>, Path) ->
+  post_handler_for_path(Path).
+
+-spec get_handler_for_path([string()]) -> handler_fun().
+get_handler_for_path(Path) ->
   Mapping = #{
     [] => fun index/2,
-    ["add"] => fun add_item/2,
     ["add_fixtures"] => fun add_fixtures/2
+  },
+  maps:get(Path, Mapping, fun unknown_path/2).
+
+-spec post_handler_for_path([string()]) -> handler_fun().
+post_handler_for_path(Path) ->
+  Mapping = #{
+    [] => fun add_item/2
   },
   maps:get(Path, Mapping, fun unknown_path/2).
 
@@ -57,12 +75,10 @@ index(Req, State) ->
 
 -spec add_item(term(), term()) -> {ok, term(), term()}.
 add_item(Req, State) ->
-  Params = maps:from_list(cowboy_req:parse_qs(Req)),
-  StringParams = maps:map(fun (_Key, Value) -> binary_to_list(Value) end, Params),
-  Id = id(StringParams),
-  Title = title(StringParams),
-  Description = description(StringParams),
-  item_cache:add(#item{id = list_to_integer(Id), title = Title, description = Description}),
+  {ok, Body, _} = cowboy_req:read_body(Req),
+  Json = mochijson2:decode(Body, [{format, map}]),
+  Item = items:item_from_binary_map(Json),
+  item_cache:add(Item),
   {ok, Req, State}.
 
 -spec add_fixtures(term(), term()) -> {ok, term(), term()}.

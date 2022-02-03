@@ -60,8 +60,10 @@ changeRouteTo maybeRoute model =
     Nothing -> ( Index { session = session, stats = Nothing }, Cmd.none )
     Just Route.Index ->
       Index.init session
-        |> updateWith Index GotIndexMsg model
-    Just Route.ItemList -> ( ItemList { session = session, items = Just testItems }, Cmd.none )    
+        |> updateWith Index GotIndexMsg model        
+    Just Route.ItemList -> 
+      ItemList.init session
+        |> updateWith ItemList GotItemListMsg model
 
 testItems : List Item
 testItems =

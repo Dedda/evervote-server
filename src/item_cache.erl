@@ -24,7 +24,11 @@ start_link() ->
 
 -spec init(any()) -> {ok, state()}.
 init(_Args) ->
-  {ok, #state{}}.
+  FixtureItems = #{
+    1 => #item{id = 1, title = "First item", description = "The first item ever!"},
+    2 => #item{id = 2, title = "Second item", description = "This item is second."}
+  },
+  {ok, #state{items = FixtureItems}}.
 
 -spec handle_call
     ({find, item_id()}, pid(), state()) -> {reply, {ok, item()} | {error, term()}, state()};

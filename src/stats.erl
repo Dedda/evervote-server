@@ -10,9 +10,14 @@
 -author("dedda").
 
 %% API
--export([to_map/1]).
+-export([current/0, to_map/1]).
 
 -include("stats.hrl").
+
+-spec current() -> stats().
+current() ->
+  ItemCount = length(maps:keys(item_cache:get_all())),
+  #stats{item_count = ItemCount}.
 
 -spec to_map(stats()) -> #{ atom() => any() }.
 to_map(#stats{ item_count = ItemCount }) ->

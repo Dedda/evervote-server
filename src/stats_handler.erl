@@ -42,8 +42,7 @@ unknown_path(Req, State) ->
 
 -spec index(term(), term()) -> {ok, term(), term()}.
 index(Req, State) ->
-  Items = length(maps:keys(item_cache:get_all())),
-  Stats = #stats{item_count = Items},
+  Stats = stats:current(),
   Json = mochijson:binary_encode(stats:to_map(Stats)),
   Response = cowboy_req:reply(
     200,

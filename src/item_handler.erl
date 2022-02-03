@@ -85,15 +85,3 @@ add_item(Req, State) ->
 add_fixtures(Req, State) ->
   item_cache:add_fixtures(),
   {ok, Req, State}.
-
--spec id(#{ binary() => string() }) -> string().
-id(Params) ->
-  maps:get(<<"id">>, Params).
-
--spec title(#{ binary() => string() }) -> string().
-title(Params) ->
-  maps:get(<<"title">>, Params).
-
--spec description(#{ binary() => string() }) -> string().
-description(Params) ->
-  maps:get(<<"description">>, Params).

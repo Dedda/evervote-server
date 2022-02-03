@@ -30,8 +30,7 @@ headerBar =
                     ]
                 , div [ classList [ ("collapse", True), ("navbar-collapse", True) ] ] 
                     [ ul [ classList [ ("nav", True), ("navbar-nav", True) ]]
-                        [ navLi Route.Index "Home"
-                        , navLi Route.ItemList "Items"
+                        [ navLi Route.ItemList "Items"
                         ]
                     ]
                 ]

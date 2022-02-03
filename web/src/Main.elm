@@ -57,9 +57,11 @@ changeRouteTo maybeRoute model =
       toSession model
   in
   case maybeRoute of
-     Nothing -> ( Index { session = session }, Cmd.none )
-     Just Route.Index -> ( Index { session = session }, Cmd.none )
-     Just Route.ItemList -> ( ItemList { session = session, items = Just testItems }, Cmd.none )    
+    Nothing -> ( Index { session = session, stats = Nothing }, Cmd.none )
+    Just Route.Index ->
+      Index.init session
+        |> updateWith Index GotIndexMsg model
+    Just Route.ItemList -> ( ItemList { session = session, items = Just testItems }, Cmd.none )    
 
 testItems : List Item
 testItems =

@@ -12,7 +12,7 @@
 %% API
 -behaviour(gen_server).
 -export([get_votes/1, add_votes/2]).
--export([start_link/0, init/1, stop/0, handle_call/3, handle_cast/2]).
+-export([start_link/0, init/1, stop/0, handle_call/3, handle_cast/2, votes_count/0]).
 
 -include("items.hrl").
 
@@ -57,6 +57,10 @@ get_votes(ItemId) ->
 -spec add_votes(item_vote(), item_vote()) -> ok.
 add_votes(Votes1, Votes2) ->
   gen_server:cast(?MODULE, {add_votes, Votes1, Votes2}).
+
+-spec votes_count() -> pos_integer().
+votes_count() ->
+  gen_server:call(?MODULE, total_votes).
 
 stop() ->
   gen_server:stop(?MODULE).

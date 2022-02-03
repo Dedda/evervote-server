@@ -14,6 +14,7 @@ start(_StartType, _StartArgs) ->
         {'_', [
             {<<"/">>, cowboy_static, {file, "web/index.html"}},
             {<<"/res/[...]">>, cowboy_static, {dir, "web/"}},
+            {<<"/stats/[...]">>, stats_handler, []},
             {<<"/items/[...]">>, item_handler, []}
         ]}
     ]),

@@ -28,7 +28,8 @@ init(Req, State) ->
 handler_for_path(Path) ->
   Mapping = #{
     [] => fun index/2,
-    ["add"] => fun add_item/2
+    ["add"] => fun add_item/2,
+    ["add_fixtures"] => fun add_fixtures/2
   },
   maps:get(Path, Mapping, fun unknown_path/2).
 
@@ -62,6 +63,11 @@ add_item(Req, State) ->
   Title = title(StringParams),
   Description = description(StringParams),
   item_cache:add(#item{id = list_to_integer(Id), title = Title, description = Description}),
+  {ok, Req, State}.
+
+-spec add_fixtures(term(), term()) -> {ok, term(), term()}.
+add_fixtures(Req, State) ->
+  item_cache:add_fixtures(),
   {ok, Req, State}.
 
 -spec id(#{ binary() => string() }) -> string().

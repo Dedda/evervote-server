@@ -12,7 +12,7 @@
 %% API
 -behaviour(gen_server).
 -export([start_link/0, init/1, stop/0, handle_call/3, handle_cast/2]).
--export([get_all/0, get_random/0, add/1, set_votes/1, clear/0]).
+-export([get_all/0, get_random/0, add/1, set_votes/1, clear/0, add_fixtures/0]).
 -include("items.hrl").
 
 -record(state, {items = #{} :: items_map()}).
@@ -24,11 +24,7 @@ start_link() ->
 
 -spec init(any()) -> {ok, state()}.
 init(_Args) ->
-  FixtureItems = #{
-    1 => #item{id = 1, title = "First item", description = "The first item ever!"},
-    2 => #item{id = 2, title = "Second item", description = "This item is second."}
-  },
-  {ok, #state{items = FixtureItems}}.
+  {ok, #state{}}.
 
 -spec handle_call
     ({find, item_id()}, pid(), state()) -> {reply, {ok, item()} | {error, term()}, state()};
@@ -81,3 +77,10 @@ set_votes(Votes) ->
 -spec clear() -> ok.
 clear() ->
   set_votes(#{}).
+
+add_fixtures() ->
+  FixtureItems = [
+    #item{id = 1, title = "First item", description = "The first item ever!"},
+    #item{id = 2, title = "Second item", description = "This item is second."}
+  ],
+  lists:map(fun add/1, FixtureItems).

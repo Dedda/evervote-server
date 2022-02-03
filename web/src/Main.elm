@@ -12,6 +12,7 @@ import Page.ItemList as ItemList
 import Url exposing (Url)
 import Route exposing (..)
 import Json.Decode exposing (Value)
+import Data exposing (Item)
 import Session exposing (..)
 
 type Model
@@ -58,7 +59,12 @@ changeRouteTo maybeRoute model =
   case maybeRoute of
      Nothing -> ( Index { session = session }, Cmd.none )
      Just Route.Index -> ( Index { session = session }, Cmd.none )
-     Just Route.ItemList -> ( ItemList { session = session }, Cmd.none )    
+     Just Route.ItemList -> ( ItemList { session = session, items = Just testItems }, Cmd.none )    
+
+testItems : List Item
+testItems =
+  [ Item 1 "First" "First item"
+  , Item 2 "Second" "Second item" ]
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =

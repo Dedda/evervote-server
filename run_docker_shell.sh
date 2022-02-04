@@ -1,1 +1,3 @@
-docker run -i -p 8080:8080 evervote:latest rebar3 shell
+#!/usr/bin/bash
+
+docker run -i -p 8080:8080 --rm evervote:latest rebar3 shell

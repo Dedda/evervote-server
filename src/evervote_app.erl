@@ -10,22 +10,23 @@
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
-    Dispatch = cowboy_router:compile([
-        {'_', [
-            {<<"/">>, cowboy_static, {file, "web/index.html"}},
-            {<<"/res/[...]">>, cowboy_static, {dir, "web/"}},
-            {<<"/stats/[...]">>, stats_handler, []},
-            {<<"/items/[...]">>, item_handler, []}
-        ]}
-    ]),
-    {ok, _} = cowboy:start_clear(
-        hello_listener,
-        [{port, 8080}],
-        #{env => #{dispatch => Dispatch}}
-    ),
-    evervote_sup:start_link().
+  {ok, _} = cowboy:start_clear(
+    hello_listener,
+    [{port, 8080}],
+    #{env => #{dispatch => routing()}}
+  ),
+  evervote_sup:start_link().
 
 stop(_State) ->
-    ok.
+  ok.
 
 %% internal functions
+routing() ->
+  cowboy_router:compile([
+    {'_', [
+      {<<"/">>, cowboy_static, {file, "web/index.html"}},
+      {<<"/res/[...]">>, cowboy_static, {dir, "web/"}},
+      {<<"/stats/[...]">>, stats_handler, []},
+      {<<"/items/[...]">>, item_handler, []}
+    ]}
+  ]).

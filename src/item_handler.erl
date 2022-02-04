@@ -25,7 +25,6 @@ allowed_methods(Req, State) ->
 init(Req, State) ->
   Path = cowboy_req:path_info(Req),
   Method = cowboy_req:method(Req),
-  io:format("Method: ~w~nPath: ~w~n", [Method, Path]),
   StringPath = lists:map(fun binary_to_list/1, Path),
   HandlerFunc = handler_for_method(Method, StringPath),
   HandlerFunc(Req, State).
@@ -77,7 +76,8 @@ index(Req, State) ->
 add_item(Req, State) ->
   {ok, Body, _} = cowboy_req:read_body(Req),
   Json = mochijson2:decode(Body, [{format, map}]),
-  Item = items:item_from_binary_map(Json),
+  ItemCount = length(maps:keys(item_cache:get_all())),
+  Item = items:item_from_binary_map_optional_id(Json, ItemCount + 1),
   item_cache:add(Item),
   {ok, Req, State}.
 

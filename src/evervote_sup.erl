@@ -37,7 +37,11 @@ init([]) ->
     id => voting,
     start => {voting, start_link, []}
   },
-  ChildSpecs = [ItemCache, Voting],
+  Aggregate = #{
+    id => aggregate,
+    start => {aggregate, start_link, []}
+  },
+  ChildSpecs = [ItemCache, Voting, Aggregate],
   {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions

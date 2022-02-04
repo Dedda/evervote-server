@@ -9,13 +9,14 @@
 -behaviour(gen_server).
 
 -export([start_link/0]).
--export([init/1, handle_call/3, handle_cast/2]).
+-export([init/1, handle_call/3, handle_cast/2, stop/0]).
+-export([aggregate/2, aggregated_votes/0, votes_count/0]).
 -export([aggregate_incremental/2]).
 
 -include("aggregate.hrl").
 -include("voting.hrl").
 
--record(state, { aggregated :: aggregated_votes() }).
+-record(state, { aggregated = #{} :: aggregated_votes() }).
 
 -type state() :: #state{}.
 
@@ -26,9 +27,16 @@ start_link() ->
 init([]) ->
   {ok, #state{}}.
 
-handle_call({aggregate, incremental, Votes}, _From, State = #state{}) ->
+handle_call({aggregate, incremental, Votes}, _From, State) ->
   {ok, Aggregated} = aggregate_incremental(Votes, State#state.aggregated),
-  {reply, ok, State#state{aggregated = Aggregated}}.
+  {reply, ok, State#state{aggregated = Aggregated}};
+handle_call(aggregated_votes, _From, State) ->
+  {reply, State#state.aggregated, State};
+handle_call(votes_count, _From, State) ->
+  Votes = maps:values(State#state.aggregated),
+  Count = lists:sum(lists:map(fun (Vote) -> Vote#aggregated_vote.votes end, Votes)),
+  {reply, Count, State}.
+
 
 handle_cast(_Request, State = #state{}) ->
   {noreply, State}.
@@ -47,4 +55,13 @@ aggregate_single(Vote, Aggregated) ->
 
 -spec aggregate(vote_list(), aggregate_strategy()) -> ok.
 aggregate(Votes, Strategy) ->
-  gen_server:cast(?MODULE, {aggregate, Strategy, Votes}).
+  gen_server:call(?MODULE, {aggregate, Strategy, Votes}).
+
+aggregated_votes() ->
+  gen_server:call(?MODULE, aggregated_votes).
+
+votes_count() ->
+  gen_server:call(?MODULE, votes_count).
+
+stop() ->
+  gen_server:stop(?MODULE).

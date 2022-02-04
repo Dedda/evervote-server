@@ -8,5 +8,9 @@
 %%%-------------------------------------------------------------------
 -author("dedda").
 
--record(stats, { item_count :: pos_integer() }).
+-record(stats, {
+  item_count :: pos_integer(),
+  aggregated_votes_count :: pos_integer(),
+  unaggregated_votes_count :: pos_integer()
+}).
 -type stats() :: #stats{}.

@@ -6,7 +6,8 @@ import Json.Decode.Pipeline exposing (required, optional)
 type alias Item =
     { id : Int
     , title : String
-    , description : String }
+    , description : String
+    }
 
 itemDecoder : Decoder Item
 itemDecoder =
@@ -16,9 +17,14 @@ itemDecoder =
         |> optional "description" string ""
 
 type alias Stats =
-    { item_count : Int }
+    { item_count : Int
+    , aggregated_votes_count : Int
+    , unaggregated_votes_count : Int
+    }
 
 statsDecoder : Decoder Stats
 statsDecoder =
     Decode.succeed Stats
         |> required "item_count" int
+        |> required "aggregated_votes_count" int
+        |> required "unaggregated_votes_count" int

@@ -17,8 +17,14 @@
 -spec current() -> stats().
 current() ->
   ItemCount = length(maps:keys(item_cache:get_all())),
-  #stats{item_count = ItemCount}.
+  AggregatedVotesCount = aggregate:votes_count(),
+  UnaggregatedVotesCount = voting:votes_count(),
+  #stats{item_count = ItemCount, aggregated_votes_count = AggregatedVotesCount, unaggregated_votes_count = UnaggregatedVotesCount}.
 
 -spec to_map(stats()) -> #{ atom() => any() }.
-to_map(#stats{ item_count = ItemCount }) ->
-  #{ item_count => ItemCount }.
+to_map(#stats{ item_count = ItemCount, aggregated_votes_count = AggregatedVotesCount, unaggregated_votes_count = UnaggregatedVotesCount }) ->
+  #{
+    item_count => ItemCount,
+    aggregated_votes_count => AggregatedVotesCount,
+    unaggregated_votes_count => UnaggregatedVotesCount
+  }.

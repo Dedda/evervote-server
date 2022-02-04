@@ -12,7 +12,7 @@
 %% API
 -behaviour(gen_server).
 -export([start_link/0, init/1, stop/0, handle_call/3, handle_cast/2]).
--export([get_all/0, get_random/0, add/1, set_votes/1, clear/0, add_fixtures/0]).
+-export([get_all/0, item_count/0, get_random/0, add/1, set_votes/1, clear/0, add_fixtures/0]).
 -include("items.hrl").
 
 -record(state, {items = #{} :: items_map()}).
@@ -43,7 +43,10 @@ handle_call(get_random, _From, Items) ->
   {reply, {ok, Item}, Items};
 
 handle_call(get_all, _From, Items) ->
-  {reply, Items#state.items, Items}.
+  {reply, Items#state.items, Items};
+
+handle_call(count, _From, Items) ->
+  {reply, length(maps:keys(Items#state.items)), Items}.
 
 -spec handle_cast
     ({add, item()}, state()) -> {noreply, state()};
@@ -61,6 +64,9 @@ stop() ->
 -spec get_all() -> items_map().
 get_all() ->
   gen_server:call(?MODULE, get_all).
+
+item_count() ->
+  gen_server:call(?MODULE, count).
 
 -spec get_random() -> {ok, item()} | {error, no_items}.
 get_random() ->

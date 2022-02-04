@@ -15,7 +15,10 @@ start(_StartType, _StartArgs) ->
     [{port, 8080}],
     #{env => #{dispatch => routing()}}
   ),
-  evervote_sup:start_link().
+  SupStart = evervote_sup:start_link(),
+  {ok, Pid} = voting:start_aggregation_interval(5000),
+  register(vote_aggregation_interval, Pid),
+  SupStart.
 
 stop(_State) ->
   ok.

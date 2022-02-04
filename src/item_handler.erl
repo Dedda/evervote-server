@@ -101,9 +101,9 @@ random_pair(Req, State) ->
   {ok, Response, State}.
 
 randomPair() ->
-  Stats = stats:current(),
+  ItemCount = item_cache:item_count(),
   if
-    Stats#stats.item_count < 2 -> error;
+    ItemCount < 2 -> error;
     true -> randomPair(random_item())
   end.
 

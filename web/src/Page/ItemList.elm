@@ -1,12 +1,12 @@
 module Page.ItemList exposing (..)
 
 import Data exposing (Item, itemDecoder)
-import Json.Decode as Decode
-import Json.Encode as Encode
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Http exposing (..)
+import Json.Decode as Decode
+import Json.Encode as Encode
 import Session exposing (Session)
 import Views exposing (itemsTable)
 
@@ -29,8 +29,7 @@ type Msg
     | NewItemDescChanged String
 
 toSession : Model -> Session
-toSession model = 
-    model.session
+toSession model = model.session
 
 init : Session -> ( Model, Cmd Msg )
 init session =

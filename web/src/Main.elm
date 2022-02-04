@@ -3,28 +3,27 @@ module Main exposing (..)
 import Browser exposing (Document)
 import Browser.Navigation as Nav
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
 import Page as Page
 import Page.Blank as Blank
 import Page.Index as Index
 import Page.ItemList as ItemList
-import Url exposing (Url)
+import Page.Voting as Voting
 import Route exposing (..)
-import Json.Decode exposing (Value)
-import Data exposing (Item)
 import Session exposing (..)
+import Url exposing (Url)
 
 type Model
     = Redirect Session
     | Index Index.Model
     | ItemList ItemList.Model
+    | Voting Voting.Model
 
 type Msg
   = ChangedUrl Url
   | ClickedLink Browser.UrlRequest
   | GotIndexMsg Index.Msg
   | GotItemListMsg ItemList.Msg
+  | GotVotingMsg Voting.Msg
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url navKey =
@@ -49,6 +48,8 @@ view model =
       viewPage Page.Other GotIndexMsg (Index.view index)
     ItemList itemList ->
       viewPage Page.Other GotItemListMsg (ItemList.view itemList)
+    Voting voting ->
+      viewPage Page.Other GotVotingMsg (Voting.view voting)
 
 changeRouteTo : Maybe Route -> Model -> ( Model, Cmd Msg )
 changeRouteTo maybeRoute model =
@@ -64,11 +65,9 @@ changeRouteTo maybeRoute model =
     Just Route.ItemList -> 
       ItemList.init session
         |> updateWith ItemList GotItemListMsg model
-
-testItems : List Item
-testItems =
-  [ Item 1 "First" "First item"
-  , Item 2 "Second" "Second item" ]
+    Just Route.Voting ->
+      Voting.init session
+        |> updateWith Voting GotVotingMsg model
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -95,6 +94,9 @@ update msg model =
     ( GotItemListMsg subMsg, ItemList itemList ) ->
         ItemList.update subMsg itemList
           |> updateWith ItemList GotItemListMsg model
+    ( GotVotingMsg subMsg, Voting voting ) ->
+        Voting.update subMsg voting
+          |> updateWith Voting GotVotingMsg model
     ( _, _ ) ->
         ( model, Cmd.none )
 
@@ -113,6 +115,8 @@ toSession model =
       Index.toSession index
     ItemList itemList ->
       ItemList.toSession itemList
+    Voting voting ->
+      Voting.toSession voting
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

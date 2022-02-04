@@ -1,11 +1,10 @@
 module Page.Index exposing (..)
 
+import Data exposing (Stats, statsDecoder)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http exposing (..)
 import Session exposing (Session)
-import Route exposing (Route)
-import Data exposing (Stats, statsDecoder)
 import Views exposing (..)
 
 type alias Model = 

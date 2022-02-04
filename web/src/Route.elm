@@ -8,12 +8,14 @@ import Url.Parser as Parser exposing (Parser, oneOf, s)
 type Route
     = Index
     | ItemList
+    | Voting
 
 parser : Parser ( Route -> a ) a
 parser =
     oneOf
         [ Parser.map Index (Parser.top)
         , Parser.map ItemList (s "items")
+        , Parser.map Voting (s "vote")
         ]
 
 fromUrl : Url -> Maybe Route
@@ -36,3 +38,5 @@ routeToPieces page =
             []
         ItemList ->
             [ "items" ]
+        Voting ->
+            [ "vote" ]

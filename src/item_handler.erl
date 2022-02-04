@@ -15,6 +15,7 @@
 -export([init/2]).
 
 -include("items.hrl").
+-include("stats.hrl").
 
 -type handler_fun() :: fun((term(), term()) -> {ok, term(), term()}).
 
@@ -39,7 +40,8 @@ handler_for_method(<<"POST">>, Path) ->
 get_handler_for_path(Path) ->
   Mapping = #{
     [] => fun index/2,
-    ["add_fixtures"] => fun add_fixtures/2
+    ["add_fixtures"] => fun add_fixtures/2,
+    ["random_pair"] => fun random_pair/2
   },
   maps:get(Path, Mapping, fun unknown_path/2).
 
@@ -85,3 +87,35 @@ add_item(Req, State) ->
 add_fixtures(Req, State) ->
   item_cache:add_fixtures(),
   {ok, Req, State}.
+
+-spec random_pair(term(), term()) -> {ok, term(), term()}.
+random_pair(Req, State) ->
+  Items = randomPair(),
+  Json = mochijson2:encode(lists:map(fun items:to_binary_map/1, Items)),
+  Response = cowboy_req:reply(
+    200,
+    content_types:json(),
+    Json,
+    Req
+  ),
+  {ok, Response, State}.
+
+randomPair() ->
+  Stats = stats:current(),
+  if
+    Stats#stats.item_count < 2 -> error;
+    true -> randomPair(random_item())
+  end.
+
+randomPair(First) ->
+  Id1 = First#item.id,
+  Second = random_item(),
+  if
+    Id1 =:= Second#item.id -> randomPair(First);
+    true -> [First, Second]
+  end.
+
+-spec random_item() -> item().
+random_item() ->
+  {ok, Item} = item_cache:get_random(),
+  Item.

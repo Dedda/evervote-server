@@ -31,6 +31,7 @@ headerBar =
                 , div [ classList [ ("collapse", True), ("navbar-collapse", True) ] ] 
                     [ ul [ classList [ ("nav", True), ("navbar-nav", True) ]]
                         [ navLi Route.ItemList "Items"
+                        , navLi Route.Voting "Vote"
                         ]
                     ]
                 ]

@@ -27,6 +27,7 @@ routing() ->
       {<<"/">>, cowboy_static, {file, "web/index.html"}},
       {<<"/res/[...]">>, cowboy_static, {dir, "web/"}},
       {<<"/stats/[...]">>, stats_handler, []},
-      {<<"/items/[...]">>, item_handler, []}
+      {<<"/items/[...]">>, item_handler, []},
+      {<<"/vote">>, vote_handler, []}
     ]}
   ]).

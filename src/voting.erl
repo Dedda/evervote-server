@@ -15,6 +15,7 @@
 -export([start_link/0, init/1, stop/0, handle_call/3, handle_cast/2, votes_count/0]).
 
 -include("items.hrl").
+-include("voting.hrl").
 
 -record(state, {votes}).
 
@@ -64,3 +65,7 @@ votes_count() ->
 
 stop() ->
   gen_server:stop(?MODULE).
+
+-spec new_vote(item_id(), integer()) -> vote().
+new_vote(ItemId, Score) ->
+  #vote{item_id = ItemId, score = Score, cast = calendar:universal_time()}.

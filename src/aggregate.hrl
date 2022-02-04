@@ -10,8 +10,9 @@
 
 -include("items.hrl").
 
--record(aggregated_vote, { item :: item_id(), votes = 0 :: pos_integer(), score :: integer()}).
+-record(aggregated_vote, { item :: item_id(), votes = 0 :: pos_integer(), score = 0 :: integer()}).
 -type aggregated_vote() :: #aggregated_vote{}.
 
--record(aggregated_votes, {}).
--type aggregated_votes() :: #aggregated_votes{}.
+-type aggregated_votes() :: #{ item_id() => aggregated_vote() }.
+
+-type aggregate_strategy() :: resetting | incremental.

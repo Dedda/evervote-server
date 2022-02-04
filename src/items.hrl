@@ -8,9 +8,14 @@
 %%%-------------------------------------------------------------------
 -author("dedda").
 
+-ifndef(ITEMS_HRL).
+-define(ITEMS_HRL, 1).
+
 -type item_id() :: pos_integer().
 
 -record(item, {id :: item_id(), title :: string(), description :: string()}).
 -type item() :: #item{}.
 
 -type items_map() :: #{ item_id() => item() }.
+
+-endif.

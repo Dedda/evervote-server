@@ -25,6 +25,9 @@ itemRow item =
 
 statsTable : Stats -> Html msg
 statsTable stats =
+    let
+        total_votes = stats.aggregated_votes_count + stats.unaggregated_votes_count
+    in
     table [ class "table" ]
         [ tableHeader [ "Key", "Value" ]
         , tbody []
@@ -33,10 +36,14 @@ statsTable stats =
                 , td [] [ text (String.fromInt stats.item_count) ]
                 ]
             , tr []
+                [ td [] [ text "Total Votes" ]
+                , td [] [ text (String.fromInt total_votes) ]
+                ]
+            , tr [ class "sub-row" ]
                 [ td [] [ text "Aggregated Votes Count" ]
                 , td [] [ text (String.fromInt stats.aggregated_votes_count) ]
                 ]
-            , tr []
+            , tr [ class "sub-row" ]
                 [ td [] [ text "Unaggregated Votes Count" ]
                 , td [] [ text (String.fromInt stats.unaggregated_votes_count) ]
                 ]

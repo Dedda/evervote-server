@@ -8,21 +8,27 @@ import Http
 import Json.Decode as Decode exposing (Decoder)
 import Session exposing (..)
 
+type ItemsState
+    = Fine (Item, Item)
+    | Empty
+    | Failed
+
 type alias Model =
     { session : Session
-    , items: Maybe ( Item, Item )}
+    , items: ItemsState}
 
 type Msg
     = GotItems ( Result Http.Error ( Item, Item ) )
     | VoteForItem Item Item
     | VoteCast ( Result Http.Error () )
+    | FetchItems
 
 toSession : Model -> Session
 toSession model = model.session
 
 init : Session -> ( Model, Cmd Msg )
 init session =
-    ( Model session Nothing, fetchItems )
+    ( Model session Empty, fetchItems )
 
 fetchItems : Cmd Msg
 fetchItems =
@@ -46,14 +52,16 @@ update msg model =
     case msg of
         GotItems result ->
             case result of
-                Ok ( item1, item2 ) -> ( { model | items = Just ( item1, item2 ) }, Cmd.none )
-                Err _ -> ( model, Cmd.none )
+                Ok ( item1, item2 ) -> ( { model | items = Fine ( item1, item2 ) }, Cmd.none )
+                Err _ -> ( { model | items = Failed }, Cmd.none )
         VoteForItem winner loser ->
             ( model, sendVote winner loser )
         VoteCast result ->
             case result of
-                Ok _ -> ( { model | items = Nothing }, fetchItems )
+                Ok _ -> ( { model | items = Empty }, fetchItems )
                 Err _ -> ( model, Cmd.none )
+        FetchItems ->
+            ( model, fetchItems )
 
 
 view : Model -> { title : String, content : Html Msg }
@@ -66,8 +74,9 @@ view model =
 viewVoting : Model -> Html Msg
 viewVoting model =
     case model.items of
-        Just items -> viewItems items
-        Nothing -> div [] []
+        Fine items -> viewItems items
+        Empty -> div [] []
+        Failed -> itemsFetchErrorView
 
 viewItems : ( Item, Item ) -> Html Msg
 viewItems ( item1, item2 ) =
@@ -86,6 +95,13 @@ itemView item opponent = div []
                     , p [] [ text item.description ]
                     , button [ onClick (VoteForItem item opponent) ] [ text "Vote!" ]
                     ]
+
+itemsFetchErrorView : Html Msg
+itemsFetchErrorView =
+    div [ classList [("error-msg", True), ("alert", True), ("alert-danger", True)] ]
+        [ p [] [ text "Error loading items!" ]
+        , button [ onClick FetchItems ] [ text "Retry!" ]
+        ]
 
 itemPairDecoder : Decoder ( Item, Item )
 itemPairDecoder =

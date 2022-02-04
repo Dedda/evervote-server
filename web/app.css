@@ -5,3 +5,22 @@ body {
 .vote-item {
     text-align: center;
 }
+
+.error-msg {
+    text-align: center;
+}
+
+.error-msg * {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sub-row td {
+    font-size: 12px;
+}
+
+.sub-row td:first-child {
+    position: relative;
+    left: 1em;
+}

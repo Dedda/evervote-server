@@ -24,7 +24,7 @@ ENV PATH="${PWD}:${PATH}"
 
 EXPOSE 8080
 
-RUN (cd web; ../elm make src/Main.elm --output elm.js)
+RUN (cd web; ../elm make src/Main.elm --output app.js)
 RUN ./rebar3 compile
 RUN ./rebar3 eunit
 

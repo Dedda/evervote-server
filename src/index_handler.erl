@@ -13,10 +13,13 @@
 -behaviour(cowboy_handler).
 -export([init/2]).
 
+-include("mimetypes.hrl").
+-import(content_types, [content_type/1]).
+
 init(Req, State) ->
   Req1 = cowboy_req:reply(
     200,
-    #{<<"content-type">> => <<"text/html">>},
+    content_type(?HTML),
     index_html(),
     Req
   ),

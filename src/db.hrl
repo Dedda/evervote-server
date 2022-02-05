@@ -11,6 +11,8 @@
 -ifndef(DB_HRL).
 -define(DB_HRL, 1).
 
+-define(ABC, 1).
+
 -record(meta, {key :: atom(), value :: term()}).
 
 -endif.

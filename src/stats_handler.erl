@@ -14,6 +14,9 @@
 -export([init/2]).
 
 -include("stats.hrl").
+-include("mimetypes.hrl").
+
+-import(content_types, [content_type/1]).
 
 -type handler_fun() :: fun((term(), term()) -> {ok, term(), term()}).
 
@@ -34,7 +37,7 @@ handler_for_path(Path) ->
 unknown_path(Req, State) ->
   Req1 = cowboy_req:reply(
     200,
-    content_types:text(),
+    content_type(?TEXT),
     <<"Unknown path requested!">>,
     Req
   ),
@@ -46,7 +49,7 @@ index(Req, State) ->
   Json = mochijson:binary_encode(stats:to_map(Stats)),
   Response = cowboy_req:reply(
     200,
-    content_types:json(),
+    content_type(?JSON),
     Json,
     Req
   ),

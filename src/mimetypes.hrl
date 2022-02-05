@@ -4,15 +4,18 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 03. Feb 2022 15:03
+%%% Created : 05. Feb 2022 15:59
 %%%-------------------------------------------------------------------
--module(content_types).
 -author("dedda").
 
--export([content_type/1]).
+-ifndef(MIMETYPES_HRL).
+-define(MIMETYPES_HRL, 1).
 
--include("mimetypes.hrl").
+-type mimetype() :: binary().
 
--spec content_type(mimetype()) -> #{binary() => mimetype()}.
-content_type(Mimetype) ->
-  #{<<"content-type">> => Mimetype}.
+-define(TEXT, <<"text/plain">>).
+-define(HTML, <<"text/html">>).
+
+-define(JSON, <<"application/json">>).
+
+-endif.

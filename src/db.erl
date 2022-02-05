@@ -11,7 +11,7 @@
 
 %% API
 -export([init_mnesia/0, db_version/0]).
--export([load_items/0]).
+-export([load_items/0, write_item/1, load_aggregated_votes/0, write_aggregated_votes/1]).
 
 -include("db.hrl").
 -include("aggregate.hrl").
@@ -20,6 +20,7 @@
 -define(CURRENT_VERSION, 1).
 -define(DATA_TABLES, [item, aggregated_vote]).
 -define(SEC_10, 10000).
+-define(WILDCARD, [{'_', [], ['$_']}]).
 
 init_mnesia() ->
   ok = create_schema(),
@@ -100,7 +101,29 @@ migrate_to(1) ->
 %% PUBLIC INTERFACE
 %% ------------------------------
 
+-spec load_items() -> {ok, [item()]}.
 load_items() ->
-  Select = fun() -> mnesia:select(item, [{'_', [], ['$_']}]) end,
+  Select = fun() -> mnesia:select(item, ?WILDCARD) end,
   {atomic, Items} = mnesia:transaction(Select),
   {ok, Items}.
+
+-spec write_item(item()) -> ok.
+write_item(Item) ->
+  Write = fun() -> mnesia:write(item, Item, write) end,
+  {atomic, _} = mnesia:transaction(Write),
+  ok.
+
+-spec load_aggregated_votes() -> {ok, [aggregated_vote()]}.
+load_aggregated_votes() ->
+  Select = fun() -> mnesia:select(aggregated_vote, ?WILDCARD) end,
+  {atomic, Votes} = mnesia:transaction(Select),
+  {ok, Votes}.
+
+-spec write_aggregated_votes([aggregated_vote()]) -> ok.
+write_aggregated_votes(Aggregated) ->
+  Write =
+    fun() ->
+      lists:foreach(fun(Aggr) -> mnesia:write(aggregated_vote, Aggr, write) end, Aggregated)
+    end,
+  {atomic, _} = mnesia:transaction(Write),
+  ok.

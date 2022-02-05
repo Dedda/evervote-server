@@ -24,8 +24,13 @@ start_link() ->
 
 -spec init(any()) -> {ok, state()}.
 init(_Args) ->
-  {ok, #state{}}.
+  {ok, Items} = db:load_items(),
+  io:format("Loaded ~w items from database~n", [length(Items)]),
+  {ok, #state{items = maps:from_list(lists:map(fun (Item) -> {Item#item.id, Item} end, Items))}}.
 
+%% ------------------------------
+%% CALL HANDLING
+%% ------------------------------
 -spec handle_call
     ({find, item_id()}, pid(), state()) -> {reply, {ok, item()} | {error, term()}, state()};
     (get_random, pid(), state()) -> {reply, {ok, item()} | {error, term()}, state()};
@@ -53,6 +58,7 @@ handle_call(count, _From, Items) ->
     ({set_votes, items_map()}, state()) -> {noreply, state()}.
 handle_cast({add, Item}, Items) ->
   Id = Item#item.id,
+  db:write_item(Item),
   {noreply, Items#state{items = maps:put(Id, Item, Items#state.items)}};
 
 handle_cast({set_votes, Votes}, State) ->

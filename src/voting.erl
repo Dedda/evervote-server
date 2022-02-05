@@ -48,8 +48,12 @@ handle_call(_, _From, State) ->
   {reply, ok, State}.
 
 handle_cast(force_aggregation, State) ->
-  aggregate:aggregate(State#state.votes, incremental),
-  {noreply, State#state{votes = []}};
+  if
+    #{} =:= State#state.votes -> {noreply, State};
+    true ->
+      aggregate:aggregate(State#state.votes, incremental),
+      {noreply, State#state{votes = []}}
+  end;
 
 handle_cast(_, State) ->
   {noreply, State}.

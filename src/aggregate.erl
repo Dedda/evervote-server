@@ -16,7 +16,7 @@
 -include("aggregate.hrl").
 -include("voting.hrl").
 
--record(state, { aggregated = #{} :: aggregated_votes() }).
+-record(state, {aggregated = #{} :: aggregated_votes()}).
 
 -type state() :: #state{}.
 
@@ -25,7 +25,9 @@ start_link() ->
 
 -spec init([]) -> {ok, state()}.
 init([]) ->
-  {ok, #state{}}.
+  {ok, Votes} = db:load_aggregated_votes(),
+  io:format("Loaded ~w aggregated vote records from database~n", [length(Votes)]),
+  {ok, #state{aggregated = maps:from_list(lists:map(fun(Vote) -> {Vote#aggregated_vote.item, Vote} end, Votes))}}.
 
 handle_call({aggregate, incremental, Votes}, _From, State) ->
   {ok, Aggregated} = aggregate_incremental(Votes, State#state.aggregated),
@@ -34,9 +36,8 @@ handle_call(aggregated_votes, _From, State) ->
   {reply, State#state.aggregated, State};
 handle_call(votes_count, _From, State) ->
   Votes = maps:values(State#state.aggregated),
-  Count = lists:sum(lists:map(fun (Vote) -> Vote#aggregated_vote.votes end, Votes)),
+  Count = lists:sum(lists:map(fun(Vote) -> Vote#aggregated_vote.votes end, Votes)),
   {reply, Count, State}.
-
 
 handle_cast(_Request, State = #state{}) ->
   {noreply, State}.
@@ -44,6 +45,10 @@ handle_cast(_Request, State = #state{}) ->
 -spec aggregate_incremental(vote_list(), aggregated_votes()) -> {vote_list(), aggregated_votes()}.
 aggregate_incremental(Votes, Aggregated) ->
   NewAggregated = lists:foldl(fun(Vote, Acc) -> aggregate_single(Vote, Acc) end, Aggregated, Votes),
+  spawn(
+    fun() ->
+      dump_to_db(Aggregated)
+    end),
   {ok, NewAggregated}.
 
 -spec aggregate_single(vote(), aggregated_votes()) -> aggregated_votes().
@@ -65,3 +70,6 @@ votes_count() ->
 
 stop() ->
   gen_server:stop(?MODULE).
+
+dump_to_db(Aggregated) ->
+  db:write_aggregated_votes(maps:values(Aggregated)).

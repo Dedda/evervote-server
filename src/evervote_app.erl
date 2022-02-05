@@ -10,6 +10,7 @@
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
+  ok = db:init_mnesia(),
   {ok, _} = cowboy:start_clear(
     hello_listener,
     [{port, 8080}],

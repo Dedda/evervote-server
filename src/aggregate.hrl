@@ -8,6 +8,9 @@
 %%%-------------------------------------------------------------------
 -author("dedda").
 
+-ifndef(AGGREGATE_HRL).
+-define(AGGREGATE_HRL, 1).
+
 -include("items.hrl").
 
 -record(aggregated_vote, { item :: item_id(), votes = 0 :: pos_integer(), score = 0 :: integer()}).
@@ -16,3 +19,5 @@
 -type aggregated_votes() :: #{ item_id() => aggregated_vote() }.
 
 -type aggregate_strategy() :: resetting | incremental.
+
+-endif.

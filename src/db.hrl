@@ -4,18 +4,13 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 03. Feb 2022 17:04
+%%% Created : 05. Feb 2022 1:20 AM
 %%%-------------------------------------------------------------------
 -author("dedda").
 
--ifndef(STATS_HRL).
--define(STATS_HRL, 1).
+-ifndef(DB_HRL).
+-define(DB_HRL, 1).
 
--record(stats, {
-  item_count :: pos_integer(),
-  aggregated_votes_count :: pos_integer(),
-  unaggregated_votes_count :: pos_integer()
-}).
--type stats() :: #stats{}.
+-record(meta, {key :: atom(), value :: term()}).
 
 -endif.
